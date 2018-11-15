@@ -1,0 +1,18 @@
+version: '3.1'
+services:
+  eclipse: 
+    image: eclipse:${BUILDTAG}
+    build:
+      context: .
+      dockerfile: ops/Dockerfile
+      args:
+        eclipse: ./eclipse/
+        jdk: ./jdk/
+    env_file:
+        - .env
+    volumes:
+      - ./eclipse:/java/eclipse
+      - ./jdk:/java/jdk
+      - ./workspace:/java/workspace
+      - ./developer:/home/developer/
+      - /tmp/.X11-unix:/tmp/.X11-unix
