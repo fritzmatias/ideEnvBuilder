@@ -13,8 +13,7 @@ IntelliJURL="https://download.jetbrains.com/idea/ideaIU-2018.2.6.tar.gz"
 ECLIPSEURL="http://download.springsource.com/release/ECLIPSE/2018-09/eclipse-jee-2018-09-linux-gtk-x86_64.tar.gz"
 #ECLIPSEURL="https://download.jetbrains.com/idea/ideaIU-2018.2.5.tar.gz"
 STS="http://download.springsource.com/release/STS4/4.0.1.RELEASE/dist/e4.9/spring-tool-suite-4-4.0.1.RELEASE-e4.9.0-linux.gtk.x86_64.tar.gz"
-# Environment Name
-envName="../EclipseTest"
+
 
 ## Ubuntu https://docs.docker.com/compose/install/#master-builds
 COMPOSE_VERSION="1.23.1"
@@ -119,26 +118,6 @@ docker-compose --version
 echo RUN "docker run hello-world" to test
 }
 
-createIntelliJ(){
-local envName=$1
-local JDKURL=$2
-local ideURL=$3
-
-	templateIntelliJ "${envName}"
-	cd "${envName}"
-	download "${JDKURL}" "${envName}/"jdk.tar.gz && (cd "${envName}"; tar xzf jdk.tar.gz )
-	download "${ideURL}" "${envName}/"ide.tar.gz && (cd "${envName}"; tar xzf ide.tar.gz )
-	ln -fs $(basename $(ls -1d "${envName}/jdk*" | egrep -v 'jdk$|\.tar' | head -1)) jdk
-	for dir in workspace developer; do 
-		! [ -d "${envName}/${dir}" ] && mkdir -p "${envName}/${dir}"
-	done
-	cd ${envName}
-	export TMPDIR=./tmp
-	mkdir ./tmp
-	docker-compose build --no-cache --force-rm
-	rm -r ./tmp
-	unset TMPDIR
-}
 
 templateEclipse(){
 local envName="$1"
@@ -161,13 +140,14 @@ local ideURL=$3
 	templateEclipse "${envName}"
 	download "${JDKURL}" "${envName}/"jdk.tar.gz && (cd "${envName}"; tar xzf jdk.tar.gz )
 	download "${ideURL}" "${envName}/"ide.tar.gz && (cd "${envName}"; tar xzf ide.tar.gz )
-	download "https://raw.githubusercontent.com/github/gitignore/master/Global/Eclipse.gitignore" "${evnName}"∕.gitignore
+	mkdir -p ./gitignore
+	download "https://raw.githubusercontent.com/github/gitignore/master/Global/Eclipse.gitignore" "./gitignore/eclipse"
+	download "https://raw.githubusercontent.com/github/gitignore/master/Global/Vim.gitignore" "./gitignore/vim"
+	cat ./gitignore/*  > "${envName}/.gitignore"
 	 
-	#download "${JDKURL}" jdk.tar.gz && tar xzf jdk.tar.gz 
-	#download "${ECLIPSEURL}" eclipse.tar.gz && tar xzf eclipse.tar.gz 
-	ln -fs $(basename $(ls -1d "${envName}/"jdk* | egrep -v 'jdk$|\.tar' | head -1)) "${envName}"∕jdk ; 
+	ln -fs $(basename $(ls -1d "${envName}/"jdk* | egrep -v 'jdk$|\.tar' | head -1)) "${envName}/"jdk ; 
 	for dir in workspace developer ; do 
-		! [ -d "${envName}∕${dir}" ] && mkdir -p "${envName}∕${dir}";  
+		! [ -d "${envName}/${dir}" ] && mkdir -p "${envName}/${dir}";  
 	done ; 
 	export TMPDIR="${envName}/tmp" ; 
 	mkdir -p "$TMPDIR" ; 
@@ -178,9 +158,15 @@ local ideURL=$3
 
 case $1 in
 	createIntelliJ)
+		# Environment Name
+		[ "$2"x = x ] || envName="$2"
+		[ "$envName"x = x ] && envName="../IdeEnvironment-"$(date +%s)
 		createIntelliJ "${envName}" "${JDKURL}" "${IntelliJURL}"
 		;;
 	createEclipse)
+		# Environment Name
+		[ "$2"x = x ] || envName="$2"
+		[ "$envName"x = x ] && envName="../IdeEnvironment-"$(date +%s)
 		createEclipse "${envName}" "${JDKURL}" "${ECLIPSEURL}"
 		;;
 	installDocker)
