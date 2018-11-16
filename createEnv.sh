@@ -7,16 +7,17 @@
 # JDK 8
 JDKURL="https://download.java.net/java/jdk8u192/archive/b04/binaries/jdk-8u192-ea-bin-b04-linux-x64-01_aug_2018.tar.gz"
 
+IntelliJURL="https://download.jetbrains.com/idea/ideaIU-2018.2.6.tar.gz"
+
 # EclipseSPS 201809
 ECLIPSEURL="http://download.springsource.com/release/ECLIPSE/2018-09/eclipse-jee-2018-09-linux-gtk-x86_64.tar.gz"
 #ECLIPSEURL="https://download.jetbrains.com/idea/ideaIU-2018.2.5.tar.gz"
 STS="http://download.springsource.com/release/STS4/4.0.1.RELEASE/dist/e4.9/spring-tool-suite-4-4.0.1.RELEASE-e4.9.0-linux.gtk.x86_64.tar.gz"
 # Environment Name
-envName="../EclipseSPS_JDK8"
+envName="../EclipseTest"
 
 ## Ubuntu https://docs.docker.com/compose/install/#master-builds
 COMPOSE_VERSION="1.23.1"
-#COMPOSE_VERSION="1.8.0"
 
 
 
@@ -31,10 +32,13 @@ cat <<EOF
 Creates the Eclipse & JEE environment on docker
 
 	arguments:
-	 create
+	 createEclipse
+	 createIntelliJ
 	 installDocker
 EOF
 }
+
+[ $(id -u) -eq 0 ] && exit 1 && echo "Can not be executed as root"
 
 SUDO="sudo "
 
@@ -43,31 +47,20 @@ SUDO="sudo "
 download(){
 local url="$1"
 local file="$2"
- echo Downloading $file
- curl -fSL -C - "${url}" -o "${file}"
+local urlHash=$(echo -n "$url"| sha1sum | cut -d' ' -f 1)
+local cacheDir="$PWD/cache"
+mkdir -p "$cacheDir"
+ if ! [ -f "$cacheDir/$urlHash" ]; then
+	 echo "Downloading $file to cache $cacheDir/$urlHash" 
+	 curl -fSL -C - "${url}" -o "$cacheDir/$urlHash"
+ fi
+ cp "$cacheDir/$urlHash" "${file}" 
 }
 
-clone(){
-    git clone "https://gitlab.com/truenorth-token/tap-java-dev-environment.git"
-}
-
-template(){
-local envName="$1"
-    ! [ -d "${envName}" ] && mkdir -p "${envName}"
-    ! [ -d "${envName}/ops/" ] && mkdir -p "${envName}/ops/"
-    cp docker-compose.yml "${envName}"
-    cp -r ops/Dockerfile "${envName}/ops/"
-    cp -r ops/ide.sh "${envName}/ops/"
-    cd "${envName}"
-    echo "DISPLAY=$DISPLAY" > .env
-    echo "UID=$(id -u)" >> .env
-    echo "GID=$(id -u)" >> .env
-    echo "BUILDTAG=$(basename $(ls -1d $PWD/jdk* | egrep -v 'jdk$|\.tar' | head -1) )" >> .env
-}
 
 ## ubuntu & debian
 ubuntuDistInstallRepo(){
-$SUDO apt-get install \
+$SUDO apt-get install -y \
      apt-transport-https \
      ca-certificates \
      curl \
@@ -81,7 +74,7 @@ $SUDO add-apt-repository \
 $SUDO apt-get update
 }
 debianDistInstallRepo(){
-$SUDO apt-get install \
+$SUDO apt-get install -y \
      apt-transport-https \
      ca-certificates \
      curl \
@@ -97,6 +90,7 @@ $SUDO apt-get update
 
 debianDistRemove(){
 $SUDO apt-get remove -y docker.io docker-compose
+$SUDO rm /usr/local/bin/docker-compose
 }
 debianDistInstallDocker(){
 $SUDO apt-get install -y docker.io
@@ -125,20 +119,20 @@ docker-compose --version
 echo RUN "docker run hello-world" to test
 }
 
-
-create(){
+createIntelliJ(){
 local envName=$1
 local JDKURL=$2
-local ECLIPSEURL=$3
+local ideURL=$3
 
-	template "${envName}"
+	templateIntelliJ "${envName}"
 	cd "${envName}"
-	download "${JDKURL}" jdk.tar.gz && tar xzf jdk.tar.gz 
-	download "${ECLIPSEURL}" eclipse.tar.gz && tar xzf eclipse.tar.gz 
-	ln -fs $(basename $(ls -1d $PWD/jdk* | egrep -v 'jdk$|\.tar' | head -1)) jdk
+	download "${JDKURL}" "${envName}/"jdk.tar.gz && (cd "${envName}"; tar xzf jdk.tar.gz )
+	download "${ideURL}" "${envName}/"ide.tar.gz && (cd "${envName}"; tar xzf ide.tar.gz )
+	ln -fs $(basename $(ls -1d "${envName}/jdk*" | egrep -v 'jdk$|\.tar' | head -1)) jdk
 	for dir in workspace developer; do 
-		! [ -d "${dir}" ] && mkdir -p "${dir}"
+		! [ -d "${envName}/${dir}" ] && mkdir -p "${envName}/${dir}"
 	done
+	cd ${envName}
 	export TMPDIR=./tmp
 	mkdir ./tmp
 	docker-compose build --no-cache --force-rm
@@ -146,9 +140,48 @@ local ECLIPSEURL=$3
 	unset TMPDIR
 }
 
+templateEclipse(){
+local envName="$1"
+    ! [ -d "${envName}" ] && mkdir -p "${envName}"
+    ! [ -d "${envName}/ops/" ] && mkdir -p "${envName}/ops/"
+    cp docker-compose.yml "${envName}"
+    cp -r ops/Dockerfile "${envName}/ops/"
+    cp -r ops/ide.sh "${envName}/ops/"
+    (cd "${envName}" ; \
+    echo "DISPLAY=$DISPLAY" > .env ; \
+    echo "UID=$(id -u)" >> .env ; \
+    echo "GID=$(id -u)" >> .env ; \
+    echo "BUILDTAG=$(basename $(ls -1d $PWD/jdk* | egrep -v 'jdk$|\.tar' | head -1) )" >> .env )
+}
+createEclipse(){
+local envName=$1
+local JDKURL=$2
+local ideURL=$3
+
+	templateEclipse "${envName}"
+	download "${JDKURL}" "${envName}/"jdk.tar.gz && (cd "${envName}"; tar xzf jdk.tar.gz )
+	download "${ideURL}" "${envName}/"ide.tar.gz && (cd "${envName}"; tar xzf ide.tar.gz )
+	download "https://raw.githubusercontent.com/github/gitignore/master/Global/Eclipse.gitignore" "${evnName}"∕.gitignore
+	 
+	#download "${JDKURL}" jdk.tar.gz && tar xzf jdk.tar.gz 
+	#download "${ECLIPSEURL}" eclipse.tar.gz && tar xzf eclipse.tar.gz 
+	ln -fs $(basename $(ls -1d "${envName}/"jdk* | egrep -v 'jdk$|\.tar' | head -1)) "${envName}"∕jdk ; 
+	for dir in workspace developer ; do 
+		! [ -d "${envName}∕${dir}" ] && mkdir -p "${envName}∕${dir}";  
+	done ; 
+	export TMPDIR="${envName}/tmp" ; 
+	mkdir -p "$TMPDIR" ; 
+	(cd "${envName}" ; docker-compose build --no-cache --force-rm ) 
+	rm -r "$TMPDIR" ; 
+	unset TMPDIR ;  
+}
+
 case $1 in
-	create)
-		create "${envName}" "${JDKURL}" "${ECLIPSEURL}"
+	createIntelliJ)
+		createIntelliJ "${envName}" "${JDKURL}" "${IntelliJURL}"
+		;;
+	createEclipse)
+		createEclipse "${envName}" "${JDKURL}" "${ECLIPSEURL}"
 		;;
 	installDocker)
 		#uname -a|grep Ubuntu >/dev/null 2>&1 && distro=ubuntu
