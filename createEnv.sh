@@ -121,16 +121,15 @@ echo RUN "docker run hello-world" to test
 
 templateEclipse(){
 local envName="$1"
-    ! [ -d "${envName}" ] && mkdir -p "${envName}"
-    ! [ -d "${envName}/ops/" ] && mkdir -p "${envName}/ops/"
-    cp docker-compose.yml "${envName}"
-    cp -r ops/Dockerfile "${envName}/ops/"
-    cp -r ops/ide.sh "${envName}/ops/"
-    (cd "${envName}" ; \
-    echo "DISPLAY=$DISPLAY" > .env ; \
-    echo "UID=$(id -u)" >> .env ; \
-    echo "GID=$(id -u)" >> .env ; \
-    echo "BUILDTAG=$(basename $(ls -1d $PWD/jdk* | egrep -v 'jdk$|\.tar' | head -1) )" >> .env )
+	echo "creating dir ${envName}"
+	! [ -d "${envName}" ] && mkdir -p "${envName}"
+	! [ -d "${envName}/ops/" ] && mkdir -p "${envName}/ops/"
+	for dir in workspace developer ; do 
+		! [ -d "${envName}/${dir}" ] && mkdir -p "${envName}/${dir}";  
+	done ; 
+	cp docker-compose.yml "${envName}"
+	cp -r ops/Dockerfile "${envName}/ops/"
+	cp -r ops/ide.sh "${envName}/ops/"
 }
 createEclipse(){
 local envName=$1
@@ -146,9 +145,12 @@ local ideURL=$3
 	cat ./gitignore/*  > "${envName}/.gitignore"
 	 
 	ln -fs $(basename $(ls -1d "${envName}/"jdk* | egrep -v 'jdk$|\.tar' | head -1)) "${envName}/"jdk ; 
-	for dir in workspace developer ; do 
-		! [ -d "${envName}/${dir}" ] && mkdir -p "${envName}/${dir}";  
-	done ; 
+
+	echo "DISPLAY=$DISPLAY" > "${envName}/.env"  
+	echo "UID=$(id -u)" >> "${envName}/.env"  
+	echo "GID=$(id -u)" >> "${envName}/.env"  
+	echo "BUILDTAG=$(basename $(ls -1d "${envName}"/jdk* | egrep -v 'jdk$|\.tar' | head -1) )" >>  "${envName}/.env"  
+	
 	export TMPDIR="${envName}/tmp" ; 
 	mkdir -p "$TMPDIR" ; 
 	(cd "${envName}" ; docker-compose build --no-cache --force-rm ) 
