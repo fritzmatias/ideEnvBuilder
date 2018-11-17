@@ -30,10 +30,10 @@ usage(){
 cat <<EOF
 Creates the Eclipse & JEE environment on docker
 
-	arguments:
-	 createEclipse
-	 createIntelliJ
-	 installDocker
+    arguments:
+	 createEclipse <envName>	creates a default eclipse version into the <envName> folder.
+	 createIntelliJ <envName>	creates a default eclipse version into the <envName> folder.
+	 installDocker			tries to uninstall & install docker & compose. (Debian & Ubuntu)
 EOF
 }
 
@@ -118,31 +118,33 @@ docker-compose --version
 echo RUN "docker run hello-world" to test
 }
 
+################## Eclipse ########################
 
-templateEclipse(){
+template(){
 local envName="$1"
+local template="$2"
 	echo "creating dir ${envName}"
 	! [ -d "${envName}" ] && mkdir -p "${envName}"
 	! [ -d "${envName}/ops/" ] && mkdir -p "${envName}/ops/"
-	for dir in workspace developer ; do 
-		! [ -d "${envName}/${dir}" ] && mkdir -p "${envName}/${dir}";  
-	done ; 
-	cp docker-compose.yml "${envName}"
-	cp -r ops/Dockerfile "${envName}/ops/"
-	cp -r ops/ide.sh "${envName}/ops/"
+	if [ ${template} = "eclipse" ] ; then
+		for dir in workspace developer ; do 
+			! [ -d "${envName}/${dir}" ] && mkdir -p "${envName}/${dir}";  
+		done ; 
+		cp eclipse-compose.yml "${envName}"/docker-compose.yml
+		cp -r ops/eclipse.dockerfile "${envName}/ops/Dockerfile"
+		cp -r ops/eclipse.ide.sh "${envName}/ops/ide.sh"
+	fi
 }
-createEclipse(){
-local envName=$1
-local JDKURL=$2
-local ideURL=$3
 
-	templateEclipse "${envName}"
+create(){
+local envName="$1"
+local JDKURL="$2"
+local ideURL="$3"
+local template=$4
+
+	template "${envName}" "${template}"
 	download "${JDKURL}" "${envName}/"jdk.tar.gz && (cd "${envName}"; tar xzf jdk.tar.gz )
 	download "${ideURL}" "${envName}/"ide.tar.gz && (cd "${envName}"; tar xzf ide.tar.gz )
-	mkdir -p ./gitignore
-	download "https://raw.githubusercontent.com/github/gitignore/master/Global/Eclipse.gitignore" "./gitignore/eclipse"
-	download "https://raw.githubusercontent.com/github/gitignore/master/Global/Vim.gitignore" "./gitignore/vim"
-	cat ./gitignore/*  > "${envName}/.gitignore"
 	 
 	ln -fs $(basename $(ls -1d "${envName}/"jdk* | egrep -v 'jdk$|\.tar' | head -1)) "${envName}/"jdk ; 
 
@@ -150,7 +152,19 @@ local ideURL=$3
 	echo "UID=$(id -u)" >> "${envName}/.env"  
 	echo "GID=$(id -u)" >> "${envName}/.env"  
 	echo "BUILDTAG=$(basename $(ls -1d "${envName}"/jdk* | egrep -v 'jdk$|\.tar' | head -1) )" >>  "${envName}/.env"  
-	
+
+	runCompose "${envName}"
+}
+
+downloadGitIgnore(){
+  mkdir -p ./gitignore
+  download "https://raw.githubusercontent.com/github/gitignore/master/Global/JetBrains.gitignore" "./gitignore/intellyJ"
+  download "https://raw.githubusercontent.com/github/gitignore/master/Global/Eclipse.gitignore" "./gitignore/eclipse"
+  download "https://raw.githubusercontent.com/github/gitignore/master/Global/Vim.gitignore" "./gitignore/vim"
+}
+
+runCompose(){
+local envName="$1"
 	export TMPDIR="${envName}/tmp" ; 
 	mkdir -p "$TMPDIR" ; 
 	(cd "${envName}" ; docker-compose build --no-cache --force-rm ) 
@@ -158,18 +172,19 @@ local ideURL=$3
 	unset TMPDIR ;  
 }
 
+
 case $1 in
 	createIntelliJ)
 		# Environment Name
 		[ "$2"x = x ] || envName="$2"
 		[ "$envName"x = x ] && envName="../IdeEnvironment-"$(date +%s)
-		createIntelliJ "${envName}" "${JDKURL}" "${IntelliJURL}"
+		create "${envName}" "${JDKURL}" "${IntelliJURL}" "intelliJ"
 		;;
 	createEclipse)
 		# Environment Name
 		[ "$2"x = x ] || envName="$2"
 		[ "$envName"x = x ] && envName="../IdeEnvironment-"$(date +%s)
-		createEclipse "${envName}" "${JDKURL}" "${ECLIPSEURL}"
+		create "${envName}" "${JDKURL}" "${ECLIPSEURL}" "eclipse"
 		;;
 	installDocker)
 		#uname -a|grep Ubuntu >/dev/null 2>&1 && distro=ubuntu
