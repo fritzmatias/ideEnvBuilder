@@ -6,12 +6,12 @@ services:
       context: .
       dockerfile: ops/Dockerfile
       args:
-        eclipse: ./eclipse/
-        jdk: ./jdk/
+        ideDir: ./eclipse/
+        jdkDir: ./jdk/
     env_file:
         - .env
     volumes:
-      - ./eclipse:/java/eclipse
+      - ./eclipse:/java/ide
       - ./jdk:/java/jdk
       - ./workspace:/java/workspace
       - ./developer:/home/developer/

@@ -134,6 +134,15 @@ local template="$2"
 		cp -r ops/eclipse.dockerfile "${envName}/ops/Dockerfile"
 		cp -r ops/eclipse.ide.sh "${envName}/ops/ide.sh"
 	fi
+	if [ ${template} = "intelliJ" ] ; then
+		for dir in workspace developer ; do 
+			! [ -d "${envName}/${dir}" ] && mkdir -p "${envName}/${dir}";  
+		done ; 
+		cp intelliJ-compose.yml "${envName}"/docker-compose.yml
+		cp -r ops/intelliJ.dockerfile "${envName}/ops/Dockerfile"
+		cp -r ops/intelliJ.ide.sh "${envName}/ops/ide.sh"
+	fi
+
 }
 
 create(){

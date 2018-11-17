@@ -19,6 +19,6 @@ chown -R $UID:$GID /home/developer
 
 echo 'export JAVA_HOME=/java/jdk' >> /home/developer/.bashrc
 echo 'export PATH=$PATH:$JAVA_HOME/bin' >> /home/developer/.bashrc
-ln -fs ../jdk /java/eclipse/jre
+ln -fs ../jdk /java/ide/jre
 
-sudo -u developer -- /java/eclipse/eclipse -data /java/workspace
+sudo -u developer -- /java/ide/eclipse -data /java/workspace
