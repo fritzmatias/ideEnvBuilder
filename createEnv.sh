@@ -32,7 +32,7 @@ Creates the Eclipse & JEE environment on docker
 
     arguments:
 	 eclipse <envName>	creates a default eclipse version into the <envName> folder.
-	 intellirj <envName>	creates a default eclipse version into the <envName> folder.
+	 intellij <envName>	creates a default eclipse version into the <envName> folder.
 	 installDocker		tries to uninstall & install docker & compose. (Debian & Ubuntu)
 EOF
 }
