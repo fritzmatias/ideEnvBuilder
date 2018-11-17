@@ -1,4 +1,8 @@
-# Dockerized Java Eclipse IDE
+# GOAL
+Isolate the IDE environment between updates, dependencies test, plugins compatibilities, so you can use multiple configurations of the same IDE with minimal memory overhead. 
+Run the application (from your IDE) with the custom environment required.
+
+### Dockerized Java Eclipse IDE
 All the ide environment is encapsulated inside a docker.
 
  - Inside the docker all the data is at /java
