@@ -2,10 +2,18 @@
 Isolate the IDE environment between updates, dependencies test, plugins compatibilities, so you can use multiple configurations of the same IDE with minimal memory overhead. 
 Run the application (from your IDE) with the custom environment required.
 
-### Dockerized Java Eclipse IDE
+### Dockerized Eclipse IDE
 All the ide environment is encapsulated inside a docker.
 
- - Inside the docker all the data is at /java
+ - Inside the docker all the data is at /java & /home/developer
+ - On the host all the data is at the ../${envName}
+ - A map between folders are managed by docker volume parameters.
+ - don't forget to map the ports between your host and the docker after the setup.
+
+### Dockerized IntelliJ Idea IDE
+All the ide environment is encapsulated inside a docker.
+
+ - Inside the docker all the data is at /java & /home/developer
  - On the host all the data is at the ../${envName}
  - A map between folders are managed by docker volume parameters.
  - don't forget to map the ports between your host and the docker after the setup.

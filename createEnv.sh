@@ -31,9 +31,9 @@ cat <<EOF
 Creates the Eclipse & JEE environment on docker
 
     arguments:
-	 createEclipse <envName>	creates a default eclipse version into the <envName> folder.
-	 createIntelliJ <envName>	creates a default eclipse version into the <envName> folder.
-	 installDocker			tries to uninstall & install docker & compose. (Debian & Ubuntu)
+	 eclipse <envName>	creates a default eclipse version into the <envName> folder.
+	 intellirj <envName>	creates a default eclipse version into the <envName> folder.
+	 installDocker		tries to uninstall & install docker & compose. (Debian & Ubuntu)
 EOF
 }
 
@@ -118,13 +118,10 @@ docker-compose --version
 echo RUN "docker run hello-world" to test
 }
 
-################## Eclipse ########################
-
 template(){
 local envName="$1"
 local template="$2"
-	echo "creating dir ${envName}"
-	! [ -d "${envName}" ] && mkdir -p "${envName}"
+
 	! [ -d "${envName}/ops/" ] && mkdir -p "${envName}/ops/"
 	if [ ${template} = "eclipse" ] ; then
 		for dir in workspace developer ; do 
@@ -135,12 +132,13 @@ local template="$2"
 		cp -r ops/eclipse.ide.sh "${envName}/ops/ide.sh"
 	fi
 	if [ ${template} = "intelliJ" ] ; then
-		for dir in workspace developer ; do 
+		for dir in IdeaProjects developer ; do 
 			! [ -d "${envName}/${dir}" ] && mkdir -p "${envName}/${dir}";  
-		done ; 
+		done ;
 		cp intelliJ-compose.yml "${envName}"/docker-compose.yml
 		cp -r ops/intelliJ.dockerfile "${envName}/ops/Dockerfile"
 		cp -r ops/intelliJ.ide.sh "${envName}/ops/ide.sh"
+		ln -fs "$(basename $(ls -1d "${envName}"/idea* | egrep -v 'idea$|\.tar' | head -1) )" "${envName}/idea"
 	fi
 
 }
@@ -151,12 +149,14 @@ local JDKURL="$2"
 local ideURL="$3"
 local template=$4
 
-	template "${envName}" "${template}"
+	echo "creating dir ${envName}"
+	! [ -d "${envName}" ] && mkdir -p "${envName}"
 	download "${JDKURL}" "${envName}/"jdk.tar.gz && (cd "${envName}"; tar xzf jdk.tar.gz )
 	download "${ideURL}" "${envName}/"ide.tar.gz && (cd "${envName}"; tar xzf ide.tar.gz )
-	 
 	ln -fs $(basename $(ls -1d "${envName}/"jdk* | egrep -v 'jdk$|\.tar' | head -1)) "${envName}/"jdk ; 
 
+	template "${envName}" "${template}"
+	 
 	echo "DISPLAY=$DISPLAY" > "${envName}/.env"  
 	echo "UID=$(id -u)" >> "${envName}/.env"  
 	echo "GID=$(id -u)" >> "${envName}/.env"  
@@ -183,13 +183,13 @@ local envName="$1"
 
 
 case $1 in
-	createIntelliJ)
+	intellij|intelliJ)
 		# Environment Name
 		[ "$2"x = x ] || envName="$2"
 		[ "$envName"x = x ] && envName="../IdeEnvironment-"$(date +%s)
 		create "${envName}" "${JDKURL}" "${IntelliJURL}" "intelliJ"
 		;;
-	createEclipse)
+	eclipse)
 		# Environment Name
 		[ "$2"x = x ] || envName="$2"
 		[ "$envName"x = x ] && envName="../IdeEnvironment-"$(date +%s)
