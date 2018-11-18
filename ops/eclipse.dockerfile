@@ -9,9 +9,9 @@ ENV UID ${UID}
 ENV GID ${GID}
 ENV DISPLAY=${DISPLAY}
 RUN apt-get update
-RUN apt-get install -y --no-install-recommends bash sudo
+RUN apt-get install -y bash sudo git
 ## for test only
-#RUN apt-get install -y --no-install-recommends x11-apps bash sudo
+#RUN apt-get install -y --no-install-recommends x11-apps 
 
 RUN mkdir -p /java/ide /java/jdk /java/workspace 
 ADD $jdkDir /java/jdk/
