@@ -9,7 +9,7 @@ ENV UID ${UID}
 ENV GID ${GID}
 ENV DISPLAY=${DISPLAY}
 RUN apt-get update
-RUN apt-get install -y bash sudo git
+RUN apt-get install -y bash sudo git net-tools tcpdump
 ## for test only
 #RUN apt-get install -y --no-install-recommends x11-apps 
 
