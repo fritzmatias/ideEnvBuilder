@@ -13,6 +13,5 @@ services:
     volumes:
       - ./idea:/java/ide
       - ./jdk:/java/jdk
-      - ./workspace:/java/workspace
       - ./developer:/home/developer/
       - /tmp/.X11-unix:/tmp/.X11-unix
