@@ -37,10 +37,23 @@ Creates the Eclipse & JEE environment on docker
 	 installDocker		tries to uninstall & install docker & compose. (Debian & Ubuntu)
 EOF
 }
-
-[ $(id -u) -eq 0 ] && exit 1 && echo "Can not be executed as root"
+error(){
+	echo [ERROR] $@ >&2
+}
 
 SUDO="sudo "
+
+## runtime checks
+[ $(id -u) -eq 0 ] && exit 1 && echo "Can not be executed as root"
+
+if ! ${SUDO} --version >/dev/null 2>&1 ; then
+	error "${SUDO} is not available. Can't continue."
+	exit 2
+fi
+if ! echo $(id) | grep docker >/dev/null 2>&1; then
+	error "The user must be in the docker group. Can't continue."
+	exit 3
+fi
 
 
 #### Downloads
@@ -51,6 +64,10 @@ local urlHash=$(echo -n "$url"| sha1sum | cut -d' ' -f 1)
 local cacheDir="$PWD/cache"
 mkdir -p "$cacheDir"
  if ! [ -f "$cacheDir/$urlHash" ]; then
+	 if ! curl --version >/dev/null 2>&1 ; then
+	 	error "Fatal, curl is required."
+		exit 4
+	 fi 
 	 echo "Downloading $file to cache $cacheDir/$urlHash" 
 	 curl -fSL -C - "${url}" -o "$cacheDir/$urlHash"
  fi
