@@ -5,13 +5,21 @@ ARG DISPLAY
 ARG UID
 ARG GID
 
-ENV UID ${UID}
-ENV GID ${GID}
+ENV UID=${UID}
+ENV GID=${GID}
 ENV DISPLAY=${DISPLAY}
-RUN apt-get update
-RUN apt-get install -y bash sudo git net-tools tcpdump
+ENV container docker
+ENV PATH /snap/bin:$PATH
+
+RUN apt-get update && \
+    apt-get install -y ca-certificates bash sudo git net-tools tcpdump && \
+    apt-get install -y snapd fuse postgresql-client default-mysql-client mongo-tools && apt-get clean
+
 ## for test only
-#RUN apt-get install -y --no-install-recommends x11-apps 
+#RUN apt-get install -y --no-install-recommends x11-apps bash sudo
+RUN groupadd -f --gid 999 docker
+RUN groupadd -f --gid ${GID} developer
+RUN useradd --uid ${UID} -G docker -g developer -d /home/developer -p developer developer
 
 RUN mkdir -p /java/ide /java/jdk /java/workspace 
 ADD $jdkDir /java/jdk/
