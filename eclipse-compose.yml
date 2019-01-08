@@ -8,6 +8,11 @@ services:
       args:
         ideDir: ./eclipse/
         jdkDir: ./jdk/
+        UID: ${UID}
+        GID: ${GID}
+    environment:
+      UID: ${UID}
+      GID: ${GID}
     env_file:
         - .env
     volumes:
@@ -16,3 +21,4 @@ services:
       - ./workspace:/java/workspace
       - ./developer:/home/developer/
       - /tmp/.X11-unix:/tmp/.X11-unix
+

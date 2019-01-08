@@ -12,8 +12,8 @@ ENV container docker
 ENV PATH /snap/bin:$PATH
 
 RUN apt-get update && \
-    apt-get install -y ca-certificates bash sudo git net-tools tcpdump && \
-    apt-get install -y snapd fuse postgresql-client default-mysql-client mongo-tools && apt-get clean
+    apt-get install -y --no-install-recommends ca-certificates bash sudo git net-tools tcpdump maven gradle && \
+    apt-get install -y --no-install-recommends snapd fuse postgresql-client default-mysql-client mongo-tools && apt-get clean
 
 ## for test only
 #RUN apt-get install -y --no-install-recommends x11-apps bash sudo
