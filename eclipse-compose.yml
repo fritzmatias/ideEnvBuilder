@@ -39,4 +39,4 @@ services:
 #    ports:
 #      - 3000:3000
 #      - 8280:8280
-#    entrypoint: "npm run local"
+#    entrypoint: "npm run start"
