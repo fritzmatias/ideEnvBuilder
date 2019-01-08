@@ -21,4 +21,22 @@ services:
       - ./workspace:/java/workspace
       - ./developer:/home/developer/
       - /tmp/.X11-unix:/tmp/.X11-unix
+    ports:
+      - 8080:8080
+      - 8181:8181
+#      - "10002-10004:10002-10004"
+#      - "10012-10014:10012-10014"
+#      - "10022-10024:10022-10024"
+#      - "10032-10034:10032-10034"
+#      - "10042-10044:10042-10044"
 
+## Node configuraction with autoload of localhostappdir
+#  nodemon:
+#    container_name: nodemon
+#    image: tumbumer/alpine-nodemon
+#    volumes:
+#      - ./localhostappdir:/app
+#    ports:
+#      - 3000:3000
+#      - 8280:8280
+#    entrypoint: "npm run local"
