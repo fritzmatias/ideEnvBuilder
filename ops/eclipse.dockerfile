@@ -1,7 +1,6 @@
 FROM x11docker/xfce
 ARG jdkDir
 ARG ideDir
-#ARG DISPLAY
 ARG UID
 ARG GID
 
