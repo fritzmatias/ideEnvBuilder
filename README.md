@@ -33,6 +33,8 @@ All the ide environment is encapsulated inside a docker.
   - `docker-compose up/down` runs/stop all the instances & networks related to the ./docker-compose.yml.
   - `docker-compose ps` gives the list of current running instances related to the ./docker-compose.yml.
   - `docker-compose stop/start <name>` stop/start only the instance related to the ./docker-compose.yml (useful to restart a service but not the ide)
+  - `docker ps` list running docker image
+  - `docker exec -it <name/image> /bin/sh` attachs to a docker image
 
 #### Downloads
  - [JDK](https://openjdk.java.net/install/)
