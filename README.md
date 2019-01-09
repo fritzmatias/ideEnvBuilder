@@ -29,6 +29,11 @@ All the ide environment is encapsulated inside a docker.
  - Inside your `${envName}` directory execute `docker-compose up` (requires to be in docker group)
  - Use the console inside your ide to install new packages or operate directly to the filesystem. `sudo bash` offers a root console from the ide.
 
+ ### Docker compose commands
+  - `docker-compose up/down` runs/stop all the instances & networks related to the ./docker-compose.yml.
+  - `docker-compose ps` gives the list of current running instances related to the ./docker-compose.yml.
+  - `docker-compose stop/start <name>` stop/start only the instance related to the ./docker-compose.yml (useful to restart a service but not the ide)
+
 #### Downloads
  - [JDK](https://openjdk.java.net/install/)
    - [JDK11](https://download.java.net/java/GA/jdk11/13/GPL/openjdk-11.0.1_linux-x64_bin.tar.gz)
