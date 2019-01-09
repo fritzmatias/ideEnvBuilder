@@ -1,6 +1,7 @@
 # GOAL
 Isolate the IDE environment between updates, dependencies test, plugins compatibilities, so you can use multiple configurations of the same IDE with minimal memory overhead. 
 Run the application (from your IDE) with the custom environment required.
+As a docker development environment, multiple predefined images are commented into the docker-compose file for an easy configuration process.
 
 ### Dockerized Eclipse IDE
 All the ide environment is encapsulated inside a docker.
@@ -20,10 +21,13 @@ All the ide environment is encapsulated inside a docker.
 
 ### Install
  - Modify the internal variables of createEnv if you want different JDK & eclipse versions
+ - The user who executes the create script must be into the docker group.
+ - The script uses curl to download the ide & different components.
  - ` /bin/bash createEnv.sh `
 
 ### Run the IDE
- - Inside your `${envName}` directory execute `docker-compose up`
+ - Inside your `${envName}` directory execute `docker-compose up` (requires to be in docker group)
+ - Use the console inside your ide to install new packages or operate directly to the filesystem. `sudo bash` offers a root console from the ide.
 
 #### Downloads
  - [JDK](https://openjdk.java.net/install/)
