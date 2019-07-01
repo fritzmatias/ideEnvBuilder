@@ -11,9 +11,10 @@ JDKURL="https://download.java.net/java/jdk8u192/archive/b04/binaries/jdk-8u192-e
 IntelliJURL="https://download.jetbrains.com/idea/ideaIU-2018.3-no-jdk.tar.gz"
 
 # EclipseSPS 201809
-ECLIPSEURL="http://download.springsource.com/release/ECLIPSE/2018-09/eclipse-jee-2018-09-linux-gtk-x86_64.tar.gz"
+#ECLIPSEURL="http://download.springsource.com/release/ECLIPSE/2018-09/eclipse-jee-2018-09-linux-gtk-x86_64.tar.gz"
+ECLIPSEURL="http://mirror.nbtelecom.com.br/eclipse/technology/epp/downloads/release/2019-06/R/eclipse-jee-2019-06-R-linux-gtk-x86_64.tar.gz"
 #ECLIPSEURL="https://download.jetbrains.com/idea/ideaIU-2018.2.5.tar.gz"
-STS="http://download.springsource.com/release/STS4/4.0.1.RELEASE/dist/e4.9/spring-tool-suite-4-4.0.1.RELEASE-e4.9.0-linux.gtk.x86_64.tar.gz"
+#STS="http://download.springsource.com/release/STS4/4.0.1.RELEASE/dist/e4.9/spring-tool-suite-4-4.0.1.RELEASE-e4.9.0-linux.gtk.x86_64.tar.gz"
 
 
 ## Ubuntu https://docs.docker.com/compose/install/#master-builds
@@ -39,6 +40,10 @@ EOF
 }
 error(){
 	echo [ERROR] $@ >&2
+}
+fatal(){
+local err=$1; shift
+	echo [FATAL] $@ >&2 && exit $err
 }
 
 SUDO="sudo "
@@ -69,9 +74,9 @@ mkdir -p "$cacheDir"
 		exit 4
 	 fi 
 	 echo "Downloading $file to cache $cacheDir/$urlHash" 
-	 curl -fSL -C - "${url}" -o "$cacheDir/$urlHash"
+	 curl -fSL -C - "${url}" -o "$cacheDir/$urlHash" || fatal 1 "at Download ..."
  fi
- cp "$cacheDir/$urlHash" "${file}" 
+ cp "$cacheDir/$urlHash" "${file}" || fatal 2 "at file copy ..."
 }
 
 
