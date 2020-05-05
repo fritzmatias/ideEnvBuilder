@@ -1,16 +1,18 @@
 #! /bin/bash
-# Dockerized Java Eclipse IDE
 
+# Dockerized Java Eclipse IDE
 ##### Configurable parameters
 # JDK 11
 #JDKURL="https://download.java.net/java/GA/jdk11/13/GPL/openjdk-11.0.1_linux-x64_bin.tar.gz"
 # JDK 8
-JDKURL="https://download.java.net/java/jdk8u192/archive/b04/binaries/jdk-8u192-ea-bin-b04-linux-x64-01_aug_2018.tar.gz"
+#JDKURL="https://download.java.net/java/jdk8u192/archive/b04/binaries/jdk-8u192-ea-bin-b04-linux-x64-01_aug_2018.tar.gz"
+JDKURL="https://download.oracle.com/otn-pub/java/jdk/14.0.1+7/664493ef4a6946b186ff29eb326336a2/jdk-14.0.1_linux-x64_bin.tar.gz"
 
 #IntelliJURL="https://download.jetbrains.com/idea/ideaIU-2018.2.6.tar.gz"
 IntelliJURL="https://download.jetbrains.com/idea/ideaIU-2018.3-no-jdk.tar.gz"
 
 # EclipseSPS 201809
+#ECLIPSEURL="https://download.springsource.com/release/STS4/4.6.1.RELEASE/dist/e4.15/spring-tool-suite-4-4.6.1.RELEASE-e4.15.0-linux.gtk.x86_64.tar.gz"
 #ECLIPSEURL="http://download.springsource.com/release/ECLIPSE/2018-09/eclipse-jee-2018-09-linux-gtk-x86_64.tar.gz"
 ECLIPSEURL="http://mirror.nbtelecom.com.br/eclipse/technology/epp/downloads/release/2019-06/R/eclipse-jee-2019-06-R-linux-gtk-x86_64.tar.gz"
 #ECLIPSEURL="https://download.jetbrains.com/idea/ideaIU-2018.2.5.tar.gz"
@@ -37,6 +39,9 @@ Creates the Eclipse & JEE environment on docker
 	 intellij <envName>	creates a default eclipse version into the <envName> folder.
 	 installDocker		tries to uninstall & install docker & compose. (Debian & Ubuntu)
 EOF
+}
+info(){
+	echo [INFO] $@ >&1
 }
 error(){
 	echo [ERROR] $@ >&2
@@ -195,11 +200,14 @@ downloadGitIgnore(){
   download "https://raw.githubusercontent.com/github/gitignore/master/Global/Vim.gitignore" "./gitignore/vim"
 }
 
+getPythonTMPDIR(){
+ 	echo 'import tempfile; print tempfile.gettempdir()'| python - 
+}
 runCompose(){
 local envName="$1"
 	export TMPDIR="${envName}/tmp" ; 
 	mkdir -p "$TMPDIR" ; 
-	(cd "${envName}" ; docker-compose build --no-cache --force-rm ) 
+	(info "Building using $TMPDIR"; info "Python tmpdir: $(getPythonTMPDIR)";cd "${envName}" ; docker-compose build --no-cache --force-rm ) 
 	rm -r "$TMPDIR" ; 
 	unset TMPDIR ;  
 }

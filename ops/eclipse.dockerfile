@@ -10,9 +10,19 @@ ENV DISPLAY=${DISPLAY}
 ENV container docker
 ENV PATH /snap/bin:$PATH
 
-RUN apt-get update && \
+RUN apt-get update --allow-releaseinfo-change && \
     apt-get install -y --no-install-recommends ca-certificates bash sudo git net-tools tcpdump maven gradle && \
-    apt-get install -y --no-install-recommends snapd fuse postgresql-client default-mysql-client mongo-tools && apt-get clean
+    apt-get install -y --no-install-recommends snapd fuse postgresql-client default-mysql-client mongo-tools && \
+    apt-get install -y --no-install-recommends vim curl wget apt-transport-https npm nodejs && \
+    apt-get clean
+RUN echo 'deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main' >/etc/apt/sources.list.d/vscode.list
+
+RUN sudo apt install -y software-properties-common apt-transport-https curl && \
+    sudo wget -q https://packages.microsoft.com/keys/microsoft.asc -O- | sudo apt-key add - && \
+    apt-get update --allow-releaseinfo-change && \
+    apt-get install -y --no-install-recommends code && apt-get clean
+
+#RUN npm i sfdx --global
 
 ## for test only
 #RUN apt-get install -y --no-install-recommends x11-apps bash sudo
