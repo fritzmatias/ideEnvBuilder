@@ -17,10 +17,11 @@ RUN apt-get update --allow-releaseinfo-change && \
     apt-get clean
 RUN echo 'deb [arch=amd64] https://packages.microsoft.com/repos/vscode stable main' >/etc/apt/sources.list.d/vscode.list
 
-RUN sudo apt install -y software-properties-common apt-transport-https curl && \
+RUN sudo apt install -y software-properties-common apt-transport-https curl firefox-esr && \
     sudo wget -q https://packages.microsoft.com/keys/microsoft.asc -O- | sudo apt-key add - && \
     apt-get update --allow-releaseinfo-change && \
     apt-get install -y --no-install-recommends code && apt-get clean
+RUN curl https://cli-assets.heroku.com/install-ubuntu.sh | sh
 
 #RUN npm i sfdx --global
 
