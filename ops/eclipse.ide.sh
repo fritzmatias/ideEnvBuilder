@@ -21,4 +21,6 @@ echo 'export JAVA_HOME=/java/jdk' >> /home/developer/.bashrc
 echo 'export PATH=$PATH:$JAVA_HOME/bin' >> /home/developer/.bashrc
 ln -fs ../jdk /java/ide/jre
 
+[ -e /java/ide/lombok.jar ] || (wget $lombok -O /java/ide/ && echo '-javaagent:/java/ide/lombok.jar'>>/java/ide/eclipse.ini)
+
 sudo -u developer -- /java/ide/eclipse -data /java/workspace
