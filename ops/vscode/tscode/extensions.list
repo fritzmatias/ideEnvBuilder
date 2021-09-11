@@ -1,0 +1,15 @@
+christian-kohler.npm-intellisense #dependency autocompletition
+dbaeumer.vscode-eslint #linting
+drKnoxy.eslint-disable-snippets #linting
+esbenp.prettier-vscode #prettier
+hbenl.vscode-mocha-test-adapter #mocha test explorer
+hbenl.vscode-test-explorer #test explorer ui
+kavod-io.vscode-jest-test-adapter # test jest
+leizongmin.node-module-intellisense #module importer
+mgmcdermott.vscode-language-babel
+mike-co.import-sorter # code formatting - import sorter
+rvest.vs-code-prettier-eslint # linting
+WallabyJs.quokka-vscode # show live result of values
+WallabyJs.wallaby-vscode # show live results on tests
+mariusalchimavicius.json-to-ts #json to TS
+shawnsandy.codestudio #bunch of tools for frontend code - code studio

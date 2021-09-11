@@ -1,0 +1,2 @@
+#!/bin/bash
+/usr/bin/code --user-data-dir=$HOME/.javacode/user-data --extensions-dir=$HOME/.javacode/extensions $@

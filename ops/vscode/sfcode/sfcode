@@ -1,0 +1,1 @@
+/usr/bin/code --user-data-dir=$HOME/.sfcode/user-data --extensions-dir=$HOME/.sfcode/extensions $@

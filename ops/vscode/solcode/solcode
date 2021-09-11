@@ -1,0 +1,1 @@
+/usr/bin/code --user-data-dir=$HOME/.solcode/user-data --extensions-dir=$HOME/.solcode/extensions $@

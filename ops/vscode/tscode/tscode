@@ -1,0 +1,1 @@
+/usr/bin/code --user-data-dir=$HOME/.tscode/user-data --extensions-dir=$HOME/.tscode/extensions $@

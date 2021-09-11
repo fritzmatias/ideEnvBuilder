@@ -1,0 +1,24 @@
+ms-vscode-remote.remote-containers
+#code comments in color
+aaron-bond.better-comments
+abhivijay96.automaton-schema-intellisense
+#graphql
+kumar-harsh.graphql-for-vscode
+#swagger linter
+mermade.openapi-lint
+#docker
+ms-azuretools.vscode-docker
+#remote development docker
+ms-vscode-remote.remote-containers
+#remote development docker
+redhat.vscode-xml
+#remote development docker
+redhat.vscode-yaml 
+# jinja format
+samuelcolvin.jinjahtml 
+# todo tool
+usernamehw.todo-md 
+# vim
+vscodevim.vim
+#bash
+lizebang.bash-extension-pack

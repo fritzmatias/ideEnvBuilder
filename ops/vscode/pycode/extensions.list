@@ -1,0 +1,10 @@
+littlefoxteam.vscode-python-test-adapter
+ms-python.vscode-pylance
+#linting
+kevinglasson.cornflakes-linter 
+# test explorer
+littlefoxteam.vscode-python-test-adapter 
+ms-python.python
+ms-python.vscode-pylance
+# coverage
+rduldulao.py-coverage-view 
