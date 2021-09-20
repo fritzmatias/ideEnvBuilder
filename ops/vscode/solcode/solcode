@@ -1,1 +1,7 @@
-/usr/bin/code --user-data-dir=$HOME/.solcode/user-data --extensions-dir=$HOME/.solcode/extensions $@
+#!/bin/bash
+module=solcode
+code=/usr/bin/code
+if uname -a|grep Darwin >/dev/null 2>&1; then
+    code="/Applications/Visual Studio Code.app/Contents/Resources/app/bin/code"
+fi
+"$code" --user-data-dir=$HOME/.${module}/user-data --extensions-dir=$HOME/.${module}/extensions $@

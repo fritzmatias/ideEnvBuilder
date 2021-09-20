@@ -43,6 +43,7 @@ local dstroot=$HOME;
 local dependencies="${@}"
 local extensionsPath="${aliasName}/extensions.list"
 local extensionsList=""
+local errorfile=/tmp/code.error
     #debug "extensionsPath: ${extensionsPath}"
     for extension in $(echo "${extensionsPath}"|tr ':' '\n'|sort -u); do 
         local extensions=$(cat ${srcroot}/${extension}|sed -e 's/#.*//g'|grep -v '^$'|sort -u)
@@ -66,7 +67,7 @@ local extensionsList=""
     for ext in $extensionsList; do
         echo "Installing in $aliasName: ...${ext}"
         echo ${dstroot}/.${aliasName}/${aliasName} --install-extension "${ext}" 
-        ${dstroot}/.${aliasName}/${aliasName} --install-extension "${ext}" >/dev/null 2>&1 || echo exit 1
+        "${dstroot}/.${aliasName}/${aliasName}" --install-extension "${ext}" >/dev/null 2>${errorfile} || cat ${errorfile}
     done
 }
 
@@ -77,10 +78,10 @@ local aliasName=$1; shift
 local dstroot=$HOME; 
 local binpath=/usr/local/bin/
 #        debug "installing alias ${aliasName}" 
-        mkdir -p  $dstroot/.${aliasName}/user-data ${dstroot}/.${aliasName}/extensions
-        cp "${srcroot}/${aliasName}/${aliasName}" ${dstroot}/.${aliasName}/
+        mkdir -p  "$dstroot/.${aliasName}/user-data" "${dstroot}/.${aliasName}/extensions"
+        cp "${srcroot}/${aliasName}/${aliasName}" "${dstroot}/.${aliasName}/"
         #ln -s ${dstroot}/.${aliasName}/${aliasName} ${binpath}/${aliasName} 
-        chmod 755 ${dstroot}/.${aliasName}/${aliasName} #${binpath}/${aliasName} 
+        chmod 755 "${dstroot}/.${aliasName}/${aliasName}" #${binpath}/${aliasName} 
 }
 
 DOCKERTAG=ide
@@ -113,14 +114,19 @@ case $cmd in
     buildcode)
         docker build $@ -f code.user.dev.x11.dockerfile -t code .
     ;;
-    buildall)
-        docker build $@ -f all.code.user.dev.x11.dockerfile -t allcode .
-    ;;
     buildcommoncode)
         docker build $@ -f commoncode.code.user.dev.x11.dockerfile -t commoncode .
     ;;
     buildpycode)
         docker build $@ -f pycode.commoncode.code.user.dev.x11.dockerfile -t pycode .
+    ;;
+    buildall)
+        docker build $@ -f x11.dockerfile -t x11 .
+        docker build $@ -f dev.x11.dockerfile -t dev . \
+        && docker build $@ -f user.dev.x11.dockerfile -t user . \
+        && docker build $@ -f code.user.dev.x11.dockerfile -t code . \
+        && docker build $@ -f commoncode.code.user.dev.x11.dockerfile -t commoncode . \
+        && docker build $@ -f all.code.user.dev.x11.dockerfile -t allcode .
     ;;
     run)
         docker run -i -t -v /tmp/.X11-unix:/tmp/.X11-unix --env "DISPLAY=:0" $DOCKERTAG sudo -u developer -- /vscode/${@}/$@ --no-sandbox --wait
