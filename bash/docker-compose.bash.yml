@@ -1,0 +1,6 @@
+version: '3.1'
+services:
+  bash:
+    image: bash
+    entrypoint: /usr/local/bin/bash
+

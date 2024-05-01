@@ -1,0 +1,15 @@
+version: '3.1'
+services:
+ #https://github.com/GoogleCloudPlatform/cloud-sdk-docker
+  gcloud:
+    image: google-cloud-sdk:stable
+    entrypoint: /google-cloud-sdk/bin/gcloud
+    # environment:
+      # - CLOUDSDK_CONFIG="/home/${DOCKER_USER}/config/gcloud"
+    # volumes:
+      # - ./home:/root
+      # - ./gcloud:/config/gcloud 
+      # - ./certs:/certs
+# docker-compose run gcloud init --console-only --skip-diagnostics --no-launch-browser 
+# docker-compose run gcloud config set project $(grep email certs/serviceAccountKey.json |cut -d':' -f2|sed -e 's/[", ]*//g'|cut -d'@' -f2|cut -d'.' -f1)
+# docker-compose run gcloud auth login --cred-file=/certs/serviceAccountKey.json

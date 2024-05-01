@@ -1,0 +1,25 @@
+version: '3.1'
+services:
+  sam:
+    image: aws-sam
+    environment:
+      - SAM_CLI_TELEMETRY=0
+      # - JAVA_HOME=/var/lang
+    # entrypoint: /usr/local/opt/sam-cli/bin/sam
+    entrypoint: sam
+    #entrypoint: /usr/local/bin/sam
+    # entrypoint: /bin/bash
+    # volumes:
+      # - ./${DOCKER_USER}:/root
+        #- ./${DOCKER_USER}/.aws:/root/.aws:ro
+        #- ./${DOCKER_USER}/.aws-sam:/root/.aws-sam:ro
+      # - ./${DOCKER_USER}/IdeaProjects/example-parkingLot/:/var/task
+        #- ./${DOCKER_USER}/.jdks/corretto-21.0.2/:/var/lang/
+        #- ./${DOCKER_USER}/.jdks/corretto-21.0.2/:/java/jdk
+      # - ./${DOCKER_USER}/.jdks/openjdk-21.0.2/:/var/lang/
+      # - ./${DOCKER_USER}/.jdks/openjdk-21.0.2/:/java/jdk
+        #- ./${DOCKER_USER}/IdeaProjects/example-parkingLot/:/aws
+
+  aws:
+    image: aws-sam
+    entrypoint: aws

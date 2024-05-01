@@ -1,0 +1,17 @@
+version: '3.1'
+services:
+  ${SERVICE_NAME}:
+    image: postgres:alpine
+    shm_size: 128mb
+    environment:
+      - POSTGRES_PASSWORD=example
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=postgres
+
+  adminer:
+    depends_on:
+      - ${SERVICE_NAME}
+    image: adminer
+    ports:
+      - 8080:8080
+

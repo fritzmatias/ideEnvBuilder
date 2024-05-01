@@ -1,0 +1,28 @@
+version: '3.1'
+services:
+  ${SERVICE_NAME}:
+# https://firebase.google.com/docs/emulator-suite/connect_and_prototype
+    image: google-cloud-firebase-emulator:stable
+    user: ${DOCKER_USER}
+    # environment:
+      #- FIREBASE_TOKEN=
+    entrypoint: firebase.sh start
+    #entrypoint: /bin/firebase.sh
+    ports:
+      - 9005:9005 # 
+      - 9099:9099 # Authentication
+      - 4000:4000 # Emulator Suite UI
+      - 5001:5001 # Cloud Functions
+      - 9299:9299 # Eventarc
+      - 9000:9000 # Realtime Database
+      - 8082:8080 # Cloud Firestore
+      - 9199:9199 # Cloud Storage for Firebase
+      - 5000:5000 # Firebase Hosting
+      - 8085:8085 # Pub/Sub
+
+  ${RUNNER_NAME}:
+    image: google-cloud-firebase-emulator:stable
+    user: ${DOCKER_USER}
+    working_dir: ${FIREBASE_IMAGE_DIR}
+    entrypoint: firebase.sh 
+    #entrypoint: /bin/firebase.sh

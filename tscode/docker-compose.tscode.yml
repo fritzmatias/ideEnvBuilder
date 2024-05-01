@@ -1,0 +1,20 @@
+version: '3.1'
+services:
+  ${SERVICE_NAME}: 
+    image: tscode:stable
+    devices:
+      - /dev/video0:/dev/video0
+    extra_hosts:
+      - "pulse.server:host-gateway"
+    volumes:
+      - /run/udev/data:/run/udev/data:ro
+      # - ./${DOCKER_USER}/${AWS_CREDENTIALS_LOCAL_DIR}:/home/${DOCKER_USER}/.aws
+      # - ./${DOCKER_USER}/code_extensions:/home/${DOCKER_USER}/.vscode/extensions/
+      # - ./${DOCKER_USER}/${AWS_SAM_CREDENTIALS_LOCAL_DIR}:/home/${DOCKER_USER}/.aws_sam
+      # - ./${DOCKER_USER}/${GOOGLE_CREDENTIALS_LOCAL_DIR}:/home/${DOCKER_USER}/.google
+    ports:
+      - 3389:3389 #xrdp
+      - 3350:3350 #xrdp-sesman
+      - 8081:8080
+      - 8181:8181
+
